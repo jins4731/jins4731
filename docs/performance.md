@@ -26,7 +26,7 @@
 
 ## 1. LCP 개선
 
-**관련 프로젝트**: [BI 플랫폼 레거시 현대화](./career.md#legacy-modernization) (2022.07~2023.12)
+**관련 프로젝트**: [BI 플랫폼 레거시 현대화](./career.md#legacy-modernization) (2022.07 ~ 2023.12)
 
 ### 문제
 
@@ -55,7 +55,7 @@
 
 ## 2. React Profiler 기반 렌더링 분석
 
-**관련 프로젝트**: [BI 솔루션 SaaS 전환](./career.md#saas-migration) (2025.01~2025.08)
+**관련 프로젝트**: [BI 솔루션 SaaS 전환](./career.md#saas-migration) (2025.01 ~ 2025.08)
 
 ### 문제
 
@@ -84,7 +84,7 @@
 
 ## 3. Chrome DevTools 기반 네트워크 분석
 
-**관련 프로젝트**: [BI 솔루션 SaaS 전환](./career.md#saas-migration) (2025.01~2025.08)
+**관련 프로젝트**: [BI 솔루션 SaaS 전환](./career.md#saas-migration) (2025.01 ~ 2025.08)
 
 ### 문제
 
@@ -111,7 +111,7 @@
 
 ## 4. Virtualized Rendering
 
-**관련 프로젝트**: [홈앤쇼핑 전사 관리 지표 프로젝트](./career.md#homeshopping) (2024.01~2024.12)
+**관련 프로젝트**: [홈앤쇼핑 전사 관리 지표 프로젝트](./career.md#homeshopping) (2024.06 ~ 2025.05)
 
 ### 문제
 

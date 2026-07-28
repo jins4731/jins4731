@@ -33,6 +33,7 @@ React / TypeScript 기반으로 **BI(Business Intelligence)·SaaS 데이터 시�
 ## 📌 Featured Projects
 
 - 🤖 [AI 기반 BI 분석 지원 서비스](./docs/career.md#ai-bi-analytics) — Claude 기반 대시보드/차트 자동 생성 `2025.08 ~ 현재`
+- 🎯 [스포츠토토 BI 서비스 SSO 연동 및 안정화](./docs/career.md#sportstoto) — SSO·비상 로그인 개발, 그리드 안정성 개선 `2025.06 ~ 2026.02`
 - 🏢 [BI 솔루션 SaaS 전환](./docs/career.md#saas-migration) — 요금제 기반 권한 구조 설계, API 호출 32% 감소 `2025.01 ~ 2025.08`
 - 📊 [홈앤쇼핑 전사 관리 지표 프로젝트](./docs/career.md#homeshopping) — Virtualized Rendering으로 보고서 조회 시간 단축 `2024.06 ~ 2025.05`
 - 🏗 [BI 플랫폼 레거시 현대화](./docs/career.md#legacy-modernization) — JSP → React SPA 전환, 코드량 62% 감소 `2022.07 ~ 2023.12`
