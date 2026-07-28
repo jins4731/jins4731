@@ -296,23 +296,24 @@ Shadcn UI
 
 ---
 
-# 🎓 Education
+# 🎓 학력
 
 
-## Kwangwoon University
+## 광운대학교 스마트융합대학원
 
-### Graduate School of Smart Convergence
-Information Systems
+**정보시스템학과 석사**
 
-Master Degree
+2016.08 ~ 2018.08
 
-GPA: 4.27 / 4.3
+- 졸업논문: 노드의 전송 효율을 개선한 WSN 라우팅 기법
+- GPA: 4.27 / 4.3
 
 
-### Institute of Information Technology
-Computer Science
+## 광운대학교 정보과학교육원
 
-Bachelor Degree
+**컴퓨터공학과 학사**
+
+2013.03 ~ 2015.08
 
 
 ---
