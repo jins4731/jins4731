@@ -318,13 +318,6 @@ Shadcn UI
 
 ---
 
-# 📈 GitHub Stats
-
-![GitHub Stats](https://github-readme-stats.vercel.app/api?username=jins4731&show_icons=true)
-
-
----
-
 # 📫 Contact
 
 Email
