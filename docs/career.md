@@ -24,11 +24,11 @@
 ## 1. AI 기반 BI 분석 지원 서비스
 
 **기간** 2025.08 ~ 현재 · **소속** ㈜위세아이텍 WI Development Team · **역할** Frontend 개발
-**기술 스택** Claude API, TypeScript, Next.js, React, TanStack Query, PostgreSQL
+**기술 스택** TypeScript, Next.js, React, TanStack Query, PostgreSQL
 
 ### 프로젝트 개요
 
-기존 BI 서비스는 사용자가 조회 조건을 직접 설정하고, 그 결과를 보며 어떤 차트로 표현할지도 직접 골라야 했습니다. 이 프로젝트는 Claude 기반 AI를 BI 조회·분석 과정에 결합해, **분석 결과 해석과 대시보드 구성을 자동화**하는 것을 목표로 진행하고 있습니다. 공공기관 포털 서비스와 BI를 연동해, 포털 이용자가 별도 학습 없이 분석 결과와 대시보드를 조회할 수 있는 화면도 함께 개발했습니다.
+기존 BI 서비스는 사용자가 조회 조건을 직접 설정하고, 그 결과를 보며 어떤 차트로 표현할지도 직접 골라야 했습니다. 이 프로젝트는 자체 AI 모델을 BI 조회·분석 과정에 결합해, **분석 결과 해석과 대시보드 구성을 자동화**하는 것을 목표로 진행하고 있습니다. 공공기관 포털 서비스와 BI를 연동해, 포털 이용자가 별도 학습 없이 분석 결과와 대시보드를 조회할 수 있는 화면도 함께 개발했습니다.
 
 ### 담당 역할
 
@@ -45,7 +45,7 @@
 ### 구현 내용
 
 - BI 조회 결과의 Measure/Dimension 구조를 분석해 AI에 전달할 컨텍스트를 구성하는 로직 설계
-- Claude API 응답을 대시보드 위젯(차트 타입, 축, 집계 방식)으로 변환하는 매핑 계층 구현
+- AI 모델 응답을 대시보드 위젯(차트 타입, 축, 집계 방식)으로 변환하는 매핑 계층 구현
 - TanStack Query 기반으로 AI 응답 대기 중에도 기존 조회 데이터를 캐시에서 즉시 보여주는 비동기 UX 설계
 - Prompt Template을 목적(차트 추천 / 보고서 추천 / 대시보드 생성)별로 분리하여 응답 품질과 유지보수성 개선
 
@@ -60,7 +60,20 @@ AI 기능과 별개로, 포털 이용자가 BI 서비스를 끊김 없이 사용
 - **개인분석 설정(마이페이지)**: 사용자별 조회 조건·필터 설정을 저장하고 불러올 수 있는 개인화 기능 구축
 - **DB 커넥션 풀 및 세션 안정화**: 상세 데이터 조회 시 발생하던 커넥션 풀 관련 이슈를 점검하고 세션 설정을 안정화
 
-> TODO(Architecture): 포털 ↔ BI ↔ Claude API 연동 구조 다이어그램
+```mermaid
+flowchart LR
+  User[포털 이용자] -->|SSO 로그인| Portal[포털 사이트]
+  Portal -->|연동 세션| BI[BI 서비스 Frontend]
+  BI -->|조회 요청| BIAPI[BI 조회 API]
+  BIAPI -->|Measure/Dimension 결과| BI
+  BI -->|캐시 우선 응답| Cache[(TanStack Query Cache)]
+  BI -->|컨텍스트 구성| Context[AI Context Builder]
+  Context -->|Prompt Template| Model[사내 자체 AI 모델]
+  Model -->|차트 타입 · 축 · 집계 방식| Mapper[대시보드 위젯 매핑 계층]
+  Mapper --> Dashboard[대시보드 자동 생성 화면]
+  BIAPI -->|보고서 메타데이터| Recommend[유사 보고서 추천 엔진]
+  Recommend --> Dashboard
+```
 
 > TODO(Image): AI 기반 대시보드 자동 생성 화면 캡처
 

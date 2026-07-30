@@ -17,7 +17,7 @@
 - React / Next.js / TypeScript 기반 서비스 개발 및 아키텍처 설계
 - 대용량 데이터 시각화 환경에서의 렌더링 최적화 (DevExtreme, ECharts, SpreadJS)
 - JSP 레거시 시스템 → React SPA → SaaS 아키텍처로 이어지는 전환 경험
-- Claude API 기반 AI 분석·대시보드 자동 생성 기능 개발 경험
+- 자체 AI 모델 기반 분석·대시보드 자동 생성 기능 개발 경험
 
 ### Domain Experience
 
@@ -73,7 +73,7 @@
 
 **AI**
 
-`Claude API` `Prompt Engineering`
+`Prompt Engineering`
 
 **Testing**
 
@@ -90,9 +90,9 @@
 ### 🤖 AI 기반 BI 분석 지원 서비스
 `2025.08 ~ 현재`
 
-Claude 기반 AI를 활용해 BI 조회 결과 분석과 대시보드 생성을 자동화하는 서비스입니다. 반복적인 보고서 작성 과정을 자동화하여 사용자의 BI 활용성을 높이는 데 초점을 맞췄습니다.
+자체 AI 모델을 활용해 BI 조회 결과 분석과 대시보드 생성을 자동화하는 서비스입니다. 반복적인 보고서 작성 과정을 자동화하여 사용자의 BI 활용성을 높이는 데 초점을 맞췄습니다.
 
-- **Tech**: Next.js, React, TypeScript, TanStack Query, Claude API, PostgreSQL
+- **Tech**: Next.js, React, TypeScript, TanStack Query, PostgreSQL
 - **핵심**: BI 결과 메타데이터 기반 AI 차트·대시보드 자동 생성, 유사 보고서 추천, Prompt Template 설계
 
 📖 [career.md에서 자세히 보기](./career.md#ai-bi-analytics)
