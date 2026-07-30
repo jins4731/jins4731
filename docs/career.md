@@ -172,7 +172,26 @@ Zustand 스토어를 도메인 구분 없이 사용하다 보니, 일부 상태 
 - 사용자 활동 로그, 데이터 사용 현황, 기능 사용 이력 등을 수집·시각화하는 SaaS 운영 모니터링 대시보드 구현
 - 외부 결제 시스템과 연동해 결제 상태를 조회하고 권한을 갱신하는 흐름 구현
 
-> TODO(Architecture): 요금제 기반 권한 검증 흐름 (Client ↔ NestJS Guard ↔ 결제 시스템)
+```mermaid
+sequenceDiagram
+  participant C as Client (React)
+  participant G as NestJS Guard
+  participant P as 권한 우선순위 정책
+  participant Pay as 결제 시스템
+  participant API as 데이터 조회 API
+
+  C->>G: API 요청 (JWT)
+  G->>P: 사용자·그룹 권한 + 요금제 권한 조회
+  P->>Pay: 결제 상태 확인
+  Pay-->>P: 결제 상태 응답
+  P-->>G: 최종 권한 판정 (우선순위 적용)
+  alt 권한 있음
+    G->>API: 요청 위임
+    API-->>C: 데이터 응답
+  else 권한 없음
+    G-->>C: 403 Forbidden
+  end
+```
 
 > TODO(Image): SaaS 운영 모니터링 대시보드 화면 캡처
 
@@ -216,7 +235,27 @@ Zustand 스토어를 도메인 구분 없이 사용하다 보니, 일부 상태 
 - **Memoization** 적용: 동일 조건 재조회 시 클라이언트 재연산을 방지하고, 데이터 가공 결과를 캐싱해 반복 계산 제거
 - 약 10만 로우 규모의 데이터 가공 로직을 클라이언트에서 서버 사이드로 이동
 
-> TODO(Architecture): Virtualized Rendering 적용 전/후 렌더링 파이프라인 비교
+```mermaid
+flowchart TB
+  subgraph before["❌ Before: 전체 렌더링"]
+    B1["데이터 조회<br/>약 10만 Row"] --> B2["클라이언트에서<br/>전체 가공"]
+    B2 --> B3["전체 Row를<br/>DOM에 렌더링"]
+    B3 --> B4["DOM 노드 급증<br/>메인 스레드 점유 ↑"]
+    B4 --> B5["스크롤 · 인터랙션 시<br/>UI 프리징"]
+  end
+  subgraph after["✅ After: Virtualized Rendering"]
+    A1["데이터 조회<br/>약 10만 Row"] --> A2["서버 사이드<br/>데이터 가공"]
+    A2 --> A3["Viewport 범위 계산"]
+    A3 --> A4["보이는 행 · 열만<br/>렌더링"]
+    A4 --> A5["스크롤 위치에 따라<br/>렌더링 범위 동적 갱신"]
+    A5 --> A6["DOM 노드 최소화<br/>조회 시간 1분 이내"]
+  end
+
+  classDef bad fill:#fde2e2,stroke:#c0392b,color:#7a1f1f
+  classDef good fill:#e3f6ea,stroke:#1e8449,color:#145a32
+  class B1,B2,B3,B4,B5 bad
+  class A1,A2,A3,A4,A5,A6 good
+```
 
 > TODO(Image): 3D Chart / 지도 기반 시각화 컴포넌트 화면 캡처
 
@@ -290,7 +329,26 @@ JSP 내 스크립트 기반으로 상태를 관리하다 보니 구조 파악과
 - Vite/Webpack 기반 빌드 환경 구성 및 번들 최적화
 - GitHub Actions로 PR 단위 정적 분석 및 검증을 수행하고, Jenkins에서 통합 빌드·배포 파이프라인을 관리하는 CI/CD 구축
 
-> TODO(Architecture): JSP → React SPA 점진적 마이그레이션 단계별 구조
+```mermaid
+flowchart LR
+  subgraph legacy["JSP 레거시"]
+    J1[화면 로직 + 비즈니스 로직 혼재]
+  end
+
+  S1[1단계: JSP 화면 영역 분석] --> S2[2단계: 조회·필터·시각화·액션 영역 분리]
+  S2 --> S3[3단계: 기능 컴포넌트 단위 React 전환]
+  S3 --> S4[4단계: Container/Presentational 패턴 적용]
+  S4 --> S5[5단계: React Router 기반 SPA 라우팅 통합]
+  S5 --> S6[6단계: 잔여 JSP 제거 · 완전 SPA 전환]
+
+  subgraph target["React SPA"]
+    R1[컴포넌트 책임 분리]
+    R2[상태 관리 구조 재설계]
+  end
+
+  legacy -.점진적 전환.-> S1
+  S6 -.-> target
+```
 
 > TODO(Image): 리팩터링 전/후 컴포넌트 구조 비교, Storybook 컴포넌트 문서 화면
 
@@ -340,7 +398,18 @@ API 명세가 문서화되어 있지 않아 프론트엔드-백엔드 간 커뮤
 - 시나리오 기반 부하 테스트로 최소 인스턴스 사양을 도출해 AWS 인프라 비용 최적화, 운영/개발 환경 분리로 안정적인 배포·테스트 환경 확보
 - 형상 관리를 SVN에서 Git으로, 일정·이슈 관리에 Jira를 도입해 협업 중심 개발 환경 구축
 
-> TODO(Architecture): 주제영역/데이터 마트 기반 관계 정의 UI 데이터 흐름
+```mermaid
+flowchart LR
+  T[원본 테이블 목록] --> SA[주제영역 Subject Area 분류]
+  SA --> Mart[데이터 마트 Mart 구성]
+  Mart --> Rel[관계 정의 UI: JOIN 조건 · 방향성 · 계층 구조 설정]
+  Rel --> Dataset[사용자 정의 데이터셋 생성]
+  Dataset --> OLAP[OLAP 분석 연계]
+  Dataset --> Viz[시각화 연계]
+  Rel -->|모델 변경 시| Sync[정합성 동기화]
+  Sync --> OLAP
+  Sync --> Viz
+```
 
 > TODO(Image): 테이블 관계 정의 화면, 데이터셋 생성 화면 캡처
 

@@ -19,12 +19,23 @@
 ## 🏗 Architecture
 
 ```
-사용자 → Supabase 인증 → React 앱 → API 계층 → TypeORM → SQLite → Dataset 저장소 → ECharts 시각화
+사용자 → Supabase 인증 → React 앱(Vercel) → API 계층 → TypeORM → PostgreSQL(Supabase) → Dataset 저장소 → ECharts 시각화
 ```
 
 프론트엔드와 API 계층을 React Router v7의 loader/action 패턴으로 한 저장소 안에서 함께 관리하는 구조입니다. 별도의 백엔드 서버 없이도 데이터 조회·저장 로직을 라우트 단위로 배치할 수 있어, 개인 프로젝트 규모에 맞는 가벼운 풀스택 구조를 지향했습니다.
 
-> TODO(Architecture): 전체 시스템 아키텍처 다이어그램 (Client / React Router / TypeORM / SQLite / Supabase)
+```mermaid
+flowchart LR
+  User[사용자] --> Auth[Supabase Auth]
+  Auth --> App[React 19 + React Router v7]
+  App -->|loader| API[API 계층 loader/action]
+  App -->|action| API
+  API --> ORM[TypeORM]
+  ORM --> DB[(PostgreSQL · Supabase)]
+  DB --> Dataset[Dataset 저장소]
+  Dataset --> Chart[ECharts 시각화]
+  Chart --> Dashboard[flexlayout-react 대시보드]
+```
 
 ---
 
@@ -33,14 +44,14 @@
 | 영역 | 기술 | 선택 이유 |
 | --- | --- | --- |
 | 프레임워크 | React 19, React Router v7, Vite | 파일 기반 라우팅과 loader/action 패턴으로 데이터 로딩·폼 처리를 라우트 단위로 응집시키기 위해 선택. Vite로 빠른 개발 서버와 빌드 속도 확보 |
-| 데이터 저장 | TypeORM, better-sqlite3 | 회사 프로젝트에서 익숙했던 TypeORM의 엔티티 기반 모델링을 그대로 활용하면서도, 별도 DB 서버 없이 로컬/소규모 배포가 가능하도록 SQLite 채택 |
+| 데이터 저장 | TypeORM, PostgreSQL (Supabase) | 회사 프로젝트에서 익숙했던 TypeORM의 엔티티 기반 모델링을 유지하면서, 인증·DB를 하나의 Supabase 프로젝트로 통합 관리하기 위해 로컬 SQLite에서 Supabase PostgreSQL로 전환 |
 | 인증 | Supabase Auth | 인증 서버를 직접 구축하는 대신 세션 관리와 보호된 라우트 구현에만 집중하기 위해 BaaS(Backend as a Service)로 위임 |
 | 시각화 | Apache ECharts | 실무(홈앤쇼핑 프로젝트 등)에서 대용량 데이터 렌더링 성능이 검증된 라이브러리로, 다양한 차트 타입과 커스터마이징 옵션이 필요했기 때문에 채택 |
 | UI | shadcn/ui, Radix UI, Tailwind CSS | 헤드리스 컴포넌트로 접근성을 확보하면서도 디자인 시스템을 자유롭게 커스터마이징하기 위해 선택 |
 | 폼 | React Hook Form, Zod | 데이터셋 생성, 차트 설정 등 필드가 많고 검증 규칙이 복잡한 폼을 스키마 기반으로 일관되게 관리하기 위해 채택 |
 | 대시보드 레이아웃 | flexlayout-react | 위젯의 자유로운 배치·리사이즈·탭 구성을 직접 구현하는 대신, 검증된 레이아웃 엔진을 활용해 핵심 기능(차트/데이터 로직) 구현에 집중 |
 | 엑셀 처리 | xlsx | 브라우저 환경에서 다중 시트 엑셀 파일을 파싱하기 위한 표준 라이브러리로 채택 |
-| 배포 | Docker | 로컬 SQLite 파일과 애플리케이션을 함께 패키징해 배포 환경 간 일관성 확보 |
+| 배포 | Vercel | React Router v7 앱을 Vercel에 배포하고, DB·인증은 Supabase로 분리 운영해 배포 파이프라인을 단순화 |
 
 ---
 
@@ -61,7 +72,9 @@ Excel 업로드
 
 핵심은 **"Excel → 메타데이터 모델 → Dataset → 시각화"** 로 이어지는 파이프라인에서, 원본 데이터를 한 번만 정규화해두면 이후 여러 차트가 같은 Dataset을 재사용할 수 있도록 만든 것입니다.
 
-> TODO(Image): 엑셀 업로드부터 대시보드 완성까지의 화면 흐름 캡처
+| 홈 | Dataset Builder (엑셀 업로드) | Dashboard Builder |
+| --- | --- | --- |
+| ![홈 화면](./images/side-project-home.jpg) | ![엑셀 업로드 화면](./images/side-project-dataset-builder.jpg) | ![대시보드 화면](./images/side-project-dashboard.jpg) |
 
 ---
 
@@ -82,12 +95,20 @@ Excel 업로드
 
 - flexlayout-react 기반 Drag & Drop 레이아웃으로 여러 차트를 하나의 화면에 자유롭게 배치
 - 위젯 단위 대시보드 구성 관리
+- 생성한 대시보드를 Supabase PostgreSQL에 저장하고 다시 불러올 수 있는 영속성 지원
 
 ### 4. 사용자 인증
 
-- Supabase 기반 로그인 및 세션 관리, 보호된 라우트 구현
+- Supabase Auth 기반 로그인/로그아웃 및 세션 관리, 보호된 라우트 구현
 
-> TODO(Image): Dataset Builder / Chart Builder / Dashboard Builder 각 화면 캡처
+**Dataset Builder (엑셀 업로드)**
+![Dataset Builder](./images/side-project-dataset-builder.jpg)
+
+**Chart Builder**
+![Chart Builder](./images/side-project-chart-builder.jpg)
+
+**Dashboard Builder**
+![Dashboard Builder](./images/side-project-dashboard.jpg)
 
 ---
 
@@ -112,15 +133,11 @@ Dataset의 컬럼 구성이 바뀌면 이미 만들어둔 Chart의 Dimension/Mea
 **차트 설정 변경 시 불필요한 전체 리렌더링**
 대시보드에 여러 차트가 배치된 상태에서 하나의 차트 설정만 바꿔도 전체가 다시 그려지는 문제가 있었습니다. 렌더링 단위를 위젯(차트) 단위로 분리해, 설정을 변경한 위젯만 리렌더링되도록 구조를 개선했습니다.
 
-**로컬 DB(better-sqlite3) 기준의 스키마 관리**
-별도 DB 서버 없이 SQLite 파일 하나로 운영하다 보니, 엔티티 구조가 바뀔 때마다 마이그레이션을 직접 관리해야 했습니다. TypeORM 마이그레이션을 기능 단위로 쪼개어, 이후 변경 이력을 추적하기 쉽도록 관리했습니다.
-
 ---
 
 ## 🔭 앞으로 계획
 
 - Dataset / 대시보드 Export 기능
-- 대시보드 저장 및 불러오기
 - 히트맵, 스택 차트 등 시각화 타입 추가
 - AI 기반 차트 추천 기능 (회사 [AI 기반 BI 분석 지원 서비스](./career.md#ai-bi-analytics) 프로젝트 경험을 개인 프로젝트에도 적용해볼 예정)
 - 대시보드 공유 및 RBAC 기반 권한 관리

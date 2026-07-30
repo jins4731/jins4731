@@ -151,7 +151,7 @@ JSP 기반 레거시 시스템을 React SPA 아키텍처로 전환하며 컴포�
 
 SQL 지식이 없는 사용자도 엑셀 데이터를 업로드해 데이터셋을 만들고, 차트와 대시보드를 직접 구성할 수 있는 셀프서비스 BI 웹 서비스입니다.
 
-- **Tech**: React 19, TypeScript, React Router v7, ECharts, Supabase, TypeORM, Shadcn UI, Tailwind CSS
+- **Tech**: React 19, TypeScript, React Router v7, ECharts, Supabase, PostgreSQL, TypeORM, Shadcn UI, Tailwind CSS
 - **핵심**: Excel 기반 데이터셋 생성, Dimension/Measure 기반 Chart Builder, Drag & Drop 대시보드
 
 🔗 [Repository](https://github.com/jins4731/datadesign-dashboard) · 🌐 [Demo](https://wemake.bar/) · 📖 [side-project.md에서 자세히 보기](./side-project.md)
