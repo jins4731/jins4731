@@ -1,0 +1,5 @@
+# docs와 README만 저장소에 올리고 나머지는 모두 무시
+/*
+!/.gitignore
+!/README.md
+!/docs/
